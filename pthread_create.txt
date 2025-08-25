@@ -1,0 +1,22 @@
+Desglose de la función pthread_create, de sus argumentos y el uso de cada uno
+
+pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(start_routine)(void *), void *arg);
+
+pthread_t *thread;
+- Identifica de forma única a un thread "pid"
+- Es un puntero a una variable de tipo pthread_t
+- pthread_t no es un tipo primitivo como int o long, es un tipo definido por la implementación de POSIX
+
+const pthread_attr_t *attr;
+- Puntero (constante) a una estructura con atributos del thread
+- pthread_attr_t es una estructura que contiene atributos de la configuración del thread, como el tamaño de la pila (stack size), si es "detachable" o "joinable", prioridad, etc.
+- Si no se necesitan configuraciones especiales se usa NULL para los valores por defecto
+
+void *(start_routine)(void *);
+- Es un puntero a una función que será ejecutada como el nuevo thread
+- Esa función retorna un void* y recibe un void* como argumento (void *nombre_funcion(void *arg)), esto permite pasar cualquier tipo de dato al hilo usando un puntero genérico
+
+void *arg;
+- Es el puntero genérico que se pasa como argumento a la función del hilo start_routine
+- Es importante dentro de la función del hilo convertirlo al tipo original usando un cast
+- pthread_create solo permite un puntero como argumento, si se quiere pasar más de un dato, hay que empaquetarlos en una estructura

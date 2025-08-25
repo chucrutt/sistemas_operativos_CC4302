@@ -1,5 +1,5 @@
 Sistema operativo utilizado
-Linux debian 6.12.41+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.41-1 (2025-08-12) x86_64 GNU/Linux
+Linux AsusBustamante 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 GNU/Linux
 ==== run-san ====
 gcc -g -DSAN=1 -fsanitize=address -fsanitize=undefined -Wall -Werror -std=c18  prod.c test-prod.c BigInt.c prod.h BigInt.h -lm -lpthread -o prod.bin-san
 ./prod.bin-san
@@ -21,15 +21,15 @@ Test: speed up
 Intento: 1
 Calculando factorial de 10000 secuencialmente
 En mi computador Ryzen 3550H se demoro unos 20 segundos
-Tiempo=171 milisegundos, cifras hexadecimales=29615
+Tiempo=94 milisegundos, cifras hexadecimales=29615
 Calculando en paralelo con 4 threads
 Deberia demorarse menos que la version secuencial
 En mi computador el speed up rondaba 1.4 con 2 cores
-Llamada secuencial con i=2500 j=4999
 Llamada secuencial con i=0 j=2499
-Llamada secuencial con i=5000 j=7499
 Llamada secuencial con i=7500 j=9999
-Tiempo=119 milisegundos, speed up=1.436975
+Llamada secuencial con i=5000 j=7499
+Llamada secuencial con i=2500 j=4999
+Tiempo=46 milisegundos, speed up=2.043478
 Felicitaciones: aprobo este modo de ejecucion
 ==== run-g ====
 gcc -g -Wall -Werror -std=c18  prod.c test-prod.c BigInt.c prod.h BigInt.h -lm -lpthread -o prod.bin-g
@@ -52,15 +52,15 @@ Test: speed up
 Intento: 1
 Calculando factorial de 40000 secuencialmente
 En mi computador Ryzen 3550H se demoro unos 20 segundos
-Tiempo=865 milisegundos, cifras hexadecimales=138453
+Tiempo=437 milisegundos, cifras hexadecimales=138453
 Calculando en paralelo con 4 threads
 Deberia demorarse menos que la version secuencial
 En mi computador el speed up rondaba 1.4 con 2 cores
 Llamada secuencial con i=0 j=9999
 Llamada secuencial con i=20000 j=29999
-Llamada secuencial con i=30000 j=39999
 Llamada secuencial con i=10000 j=19999
-Tiempo=608 milisegundos, speed up=1.422697
+Llamada secuencial con i=30000 j=39999
+Tiempo=273 milisegundos, speed up=1.600733
 Felicitaciones: aprobo este modo de ejecucion
 Verificando que se crearon 4 procesos pesados
 Aprobado
@@ -85,13 +85,13 @@ Test: speed up
 Intento: 1
 Calculando factorial de 400000 secuencialmente
 En mi computador Ryzen 3550H se demoro unos 20 segundos
-Tiempo=16580 milisegundos, cifras hexadecimales=1716698
+Tiempo=9516 milisegundos, cifras hexadecimales=1716698
 Calculando en paralelo con 4 threads
 Deberia demorarse menos que la version secuencial
 En mi computador el speed up rondaba 1.4 con 2 cores
 Llamada secuencial con i=0 j=99999
+Llamada secuencial con i=100000 j=199999
 Llamada secuencial con i=200000 j=299999
 Llamada secuencial con i=300000 j=399999
-Llamada secuencial con i=100000 j=199999
-Tiempo=11815 milisegundos, speed up=1.403301
+Tiempo=5593 milisegundos, speed up=1.701412
 Felicitaciones: aprobo este modo de ejecucion

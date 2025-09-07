@@ -5,66 +5,85 @@
 
 #include "bolsa.h"
 
-// Declare aca sus variables globales
-// ...
+// Variables globales
+int mejor_precio = 0;
+char nombreComprador[100];
+char nombreVendedor[100];
 
-typedef struct {
-  int precio;
-  char comprador[100];
-  char vendedor[100];
-} Venta;
-bool vendo = false;
-bool compro = false;
-Venta venta = {0, "", ""};
+char **compradorLocal = NULL;
+int *estadoVendedor = NULL;
+
 pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
-
 int vendo(int precio, char *vendedor, char *comprador) {
-  pthread_mutex_lock(&m);
+    pthread_mutex_lock(&m);
 
-  //Alguien ya vende
-  if(vendo) {
-    if(venta.precio < precio) { //Precio actual de venta es menor
-      //Liberar memoria y retornar falso
-      pthread_mutex_unlock(&m);
-      return false
-    } else { //Precio actual de venta es mayor
-      //Actualizar los datos de venta a los mios, despertar al vendedor dormido y liberar memoria
-      venta.vendedor = *vendedor;
-      venta.precio = precio;
-      pthread_cond_broadcast(&cond);
+    int estado = 0; // 0 = esperando, 1 = vendido, -1 = perdió
+
+    if (estadoVendedor == NULL) {
+        // Soy el único vendedor
+        strcpy(nombreVendedor, vendedor);
+        mejor_precio = precio;
+        estadoVendedor = &estado;
+        compradorLocal = &comprador;
+
+        while (estado == 0) {
+            pthread_cond_wait(&cond, &m);
+        }
+
+    } else {
+        // Ya hay un vendedor
+        if (precio > mejor_precio) {
+            // Mi precio es peor, fracaso inmediato
+            pthread_mutex_unlock(&m);
+            return 0;
+        } else {
+            // Desplazo al vendedor anterior
+            *estadoVendedor = -1; // el anterior pierde
+            // Me registro como el nuevo vendedor
+            strcpy(nombreVendedor, vendedor);
+            mejor_precio = precio;
+            estadoVendedor = &estado;
+            compradorLocal = &comprador;
+
+            pthread_cond_broadcast(&cond);
+
+            while (estado == 0) {
+                pthread_cond_wait(&cond, &m);
+            }
+        }
     }
-  }
 
-  while(!compro) { //No hay nadie comprando aún
-    venta.vendedor = *vendedor;
-    venta.precio = precio;
-    vendo = true;
-    pthread_cond_wait(&cond, &m); //Esperar a un comprador o un precio de venta menor
-  }
-  //Despertado por un comprador
+    int resultado = estado;
 
-  //Despertado por un menor postor
-
-  comprador = &venta.comprador;
-  pthread_mutex_unlock(&m);
-  return true;
-
+    pthread_mutex_unlock(&m);
+    return (resultado == 1);
 }
 
 int compro(char *comprador, char *vendedor) {
-  pthread_mutex_lock(&m);
-  if(vendo) { //Alguien quiere vender
-    vendedor = &compra.vendedor;
-    venta.comprador = *comprador;
-    int precioVenta = venta.precio;
-    vendo = false;
+    pthread_mutex_lock(&m);
+
+    if (estadoVendedor == NULL) {
+        pthread_mutex_unlock(&m);
+        return 0; // no hay vendedor
+    }
+
+    int precio = mejor_precio;
+
+    // Copiar salidas
+    strcpy(vendedor, nombreVendedor);
+    strcpy(nombreComprador, comprador);
+
+    // Notificar al vendedor que tuvo éxito
+    *estadoVendedor = 1;
+    estadoVendedor = NULL;
+
+    strcpy(*compradorLocal, nombreComprador);
+    compradorLocal = NULL;
+
     pthread_cond_broadcast(&cond);
+
     pthread_mutex_unlock(&m);
-    return precioVenta;
-  } else { //Nadie vende aún
-    compro = true;
-    pthread_cond_wait(&cond, &m);
-  }
+    return precio;
 }

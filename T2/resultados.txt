@@ -1,0 +1,156 @@
+Sistema operativo utilizado:
+Description:	Debian GNU/Linux 12 (bookworm)
+Versión del núcleo de linux:
+Linux AsusBustamante 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 GNU/Linux
+==== run-san ====
+gcc -g -DSAN=1 -fsanitize=address -fsanitize=undefined -Wall -Werror -std=c18  test-bolsa.c bolsa.c -lm -lpthread -o bolsa.bin-san
+./bolsa.bin-san
+El test del enunciado
+Se lanzo pedro
+pedro: vendo a 10
+Se lanzo juan
+juan: vendo a 5
+pedro: 1era. venta rechazada
+pedro: vendo a 7
+pedro: 2da. venta rechazada
+Se lanzo diego
+diego: compro
+diego: ok
+juan: ok
+Ok
+
+--------------------
+El test de robustez: se lanzaran 10 compradores y 100 vendedores
+Cada comprador intentara 10000 compras
+Cada . son 1000 compraventas exitosas
+Partieron
+...........................................................................................
+comp0 hara una pausa de 3 segundos
+comp0 hara la ultima compra
+comp0 hizo 9149 compras
+comp1 hizo 9164 compras
+comp2 hizo 9156 compras
+comp3 hizo 9231 compras
+comp4 hizo 9168 compras
+comp5 hizo 9194 compras
+comp6 hizo 9141 compras
+comp7 hizo 9155 compras
+comp8 hizo 9168 compras
+comp9 hizo 9068 compras
+Se hicieron en total 91594 compras
+Ok
+Felicitaciones: paso exitosamente los 2 tests de prueba
+==== run-thr ====
+gcc -g -DSAN=1 -fsanitize=thread -Wall -Werror -std=c18  test-bolsa.c bolsa.c -lm -lpthread -o bolsa.bin-thr
+./bolsa.bin-thr
+El test del enunciado
+pedro: vendo a 10
+Se lanzo pedro
+juan: vendo a 5
+Se lanzo juan
+pedro: 1era. venta rechazada
+pedro: vendo a 7
+pedro: 2da. venta rechazada
+diego: compro
+Se lanzo diego
+diego: ok
+juan: ok
+Ok
+
+--------------------
+El test de robustez: se lanzaran 10 compradores y 100 vendedores
+Cada comprador intentara 10000 compras
+Cada . son 1000 compraventas exitosas
+Partieron
+..........................................................................................
+comp0 hara una pausa de 3 segundos
+comp0 hara la ultima compra
+comp0 hizo 9133 compras
+comp1 hizo 9088 compras
+comp2 hizo 9012 compras
+comp3 hizo 9134 compras
+comp4 hizo 9091 compras
+comp5 hizo 9097 compras
+comp6 hizo 9068 compras
+comp7 hizo 9064 compras
+comp8 hizo 9054 compras
+comp9 hizo 9150 compras
+Se hicieron en total 90891 compras
+Ok
+Felicitaciones: paso exitosamente los 2 tests de prueba
+==== run-g ====
+gcc -g -Wall -Werror -std=c18  test-bolsa.c bolsa.c -lm -lpthread -o bolsa.bin-g
+./bolsa.bin-g
+El test del enunciado
+Se lanzo pedro
+pedro: vendo a 10
+Se lanzo juan
+juan: vendo a 5
+pedro: 1era. venta rechazada
+pedro: vendo a 7
+pedro: 2da. venta rechazada
+Se lanzo diego
+diego: compro
+diego: ok
+juan: ok
+Ok
+
+--------------------
+El test de robustez: se lanzaran 10 compradores y 100 vendedores
+Cada comprador intentara 10000 compras
+Cada . son 1000 compraventas exitosas
+Partieron
+............................................................................................
+comp0 hara una pausa de 3 segundos
+comp0 hara la ultima compra
+comp0 hizo 9251 compras
+comp1 hizo 9234 compras
+comp2 hizo 9277 compras
+comp3 hizo 9296 compras
+comp4 hizo 9237 compras
+comp5 hizo 9255 compras
+comp6 hizo 9228 compras
+comp7 hizo 9263 compras
+comp8 hizo 9313 compras
+comp9 hizo 9130 compras
+Se hicieron en total 92484 compras
+Ok
+Felicitaciones: paso exitosamente los 2 tests de prueba
+==== run ====
+gcc -O -DOPT=1 -Wall -Werror -std=c18  test-bolsa.c bolsa.c -lm -lpthread -o bolsa.bin
+./bolsa.bin
+El test del enunciado
+Se lanzo pedro
+pedro: vendo a 10
+Se lanzo juan
+juan: vendo a 5
+pedro: 1era. venta rechazada
+pedro: vendo a 7
+pedro: 2da. venta rechazada
+Se lanzo diego
+diego: compro
+diego: ok
+juan: ok
+Ok
+
+--------------------
+El test de robustez: se lanzaran 10 compradores y 100 vendedores
+Cada comprador intentara 10000 compras
+Cada . son 1000 compraventas exitosas
+Partieron
+............................................................................................
+comp0 hara una pausa de 3 segundos
+comp0 hara la ultima compra
+comp0 hizo 9274 compras
+comp1 hizo 9283 compras
+comp2 hizo 9202 compras
+comp3 hizo 9231 compras
+comp4 hizo 9337 compras
+comp5 hizo 9245 compras
+comp6 hizo 9299 compras
+comp7 hizo 9159 compras
+comp8 hizo 9289 compras
+comp9 hizo 9136 compras
+Se hicieron en total 92455 compras
+Ok
+Felicitaciones: paso exitosamente los 2 tests de prueba

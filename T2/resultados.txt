@@ -24,20 +24,20 @@ El test de robustez: se lanzaran 10 compradores y 100 vendedores
 Cada comprador intentara 10000 compras
 Cada . son 1000 compraventas exitosas
 Partieron
-...........................................................................................
+..........................................................................................
 comp0 hara una pausa de 3 segundos
 comp0 hara la ultima compra
-comp0 hizo 9149 compras
-comp1 hizo 9164 compras
-comp2 hizo 9156 compras
-comp3 hizo 9231 compras
-comp4 hizo 9168 compras
-comp5 hizo 9194 compras
-comp6 hizo 9141 compras
-comp7 hizo 9155 compras
-comp8 hizo 9168 compras
-comp9 hizo 9068 compras
-Se hicieron en total 91594 compras
+comp0 hizo 9146 compras
+comp1 hizo 9267 compras
+comp2 hizo 8885 compras
+comp3 hizo 9174 compras
+comp4 hizo 8973 compras
+comp5 hizo 9160 compras
+comp6 hizo 9182 compras
+comp7 hizo 8848 compras
+comp8 hizo 9147 compras
+comp9 hizo 9048 compras
+Se hicieron en total 90830 compras
 Ok
 Felicitaciones: paso exitosamente los 2 tests de prueba
 ==== run-thr ====
@@ -65,17 +65,17 @@ Partieron
 ..........................................................................................
 comp0 hara una pausa de 3 segundos
 comp0 hara la ultima compra
-comp0 hizo 9133 compras
-comp1 hizo 9088 compras
-comp2 hizo 9012 compras
-comp3 hizo 9134 compras
-comp4 hizo 9091 compras
-comp5 hizo 9097 compras
-comp6 hizo 9068 compras
-comp7 hizo 9064 compras
-comp8 hizo 9054 compras
-comp9 hizo 9150 compras
-Se hicieron en total 90891 compras
+comp0 hizo 9135 compras
+comp1 hizo 9103 compras
+comp2 hizo 9103 compras
+comp3 hizo 9081 compras
+comp4 hizo 9097 compras
+comp5 hizo 9129 compras
+comp6 hizo 9018 compras
+comp7 hizo 9123 compras
+comp8 hizo 9088 compras
+comp9 hizo 9066 compras
+Se hicieron en total 90943 compras
 Ok
 Felicitaciones: paso exitosamente los 2 tests de prueba
 ==== run-g ====
@@ -100,20 +100,20 @@ El test de robustez: se lanzaran 10 compradores y 100 vendedores
 Cada comprador intentara 10000 compras
 Cada . son 1000 compraventas exitosas
 Partieron
-............................................................................................
+...........................................................................................
 comp0 hara una pausa de 3 segundos
 comp0 hara la ultima compra
-comp0 hizo 9251 compras
+comp0 hizo 9289 compras
 comp1 hizo 9234 compras
-comp2 hizo 9277 compras
-comp3 hizo 9296 compras
-comp4 hizo 9237 compras
-comp5 hizo 9255 compras
-comp6 hizo 9228 compras
-comp7 hizo 9263 compras
-comp8 hizo 9313 compras
-comp9 hizo 9130 compras
-Se hicieron en total 92484 compras
+comp2 hizo 9267 compras
+comp3 hizo 9227 compras
+comp4 hizo 9283 compras
+comp5 hizo 8695 compras
+comp6 hizo 9254 compras
+comp7 hizo 9029 compras
+comp8 hizo 9183 compras
+comp9 hizo 9193 compras
+Se hicieron en total 91654 compras
 Ok
 Felicitaciones: paso exitosamente los 2 tests de prueba
 ==== run ====
@@ -138,19 +138,19 @@ El test de robustez: se lanzaran 10 compradores y 100 vendedores
 Cada comprador intentara 10000 compras
 Cada . son 1000 compraventas exitosas
 Partieron
-............................................................................................
+...........................................................................................
 comp0 hara una pausa de 3 segundos
 comp0 hara la ultima compra
-comp0 hizo 9274 compras
-comp1 hizo 9283 compras
-comp2 hizo 9202 compras
-comp3 hizo 9231 compras
-comp4 hizo 9337 compras
-comp5 hizo 9245 compras
-comp6 hizo 9299 compras
-comp7 hizo 9159 compras
-comp8 hizo 9289 compras
-comp9 hizo 9136 compras
-Se hicieron en total 92455 compras
+comp0 hizo 9299 compras
+comp1 hizo 9149 compras
+comp2 hizo 9306 compras
+comp3 hizo 9210 compras
+comp4 hizo 8882 compras
+comp5 hizo 9126 compras
+comp6 hizo 8885 compras
+comp7 hizo 9192 compras
+comp8 hizo 9087 compras
+comp9 hizo 8980 compras
+Se hicieron en total 91116 compras
 Ok
 Felicitaciones: paso exitosamente los 2 tests de prueba

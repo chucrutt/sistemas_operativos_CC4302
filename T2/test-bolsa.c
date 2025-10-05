@@ -114,7 +114,13 @@ static void *vendedor(void *ptr) {
   // Se hace un numero no especificado de compras.
   // Antes de hacer su ultima compra, el comprador "comp0" colocara
   // hay_comprador en 0, esperara 1 segundo y hara su ultima compra
-  while (hay_comprador) {
+  for (;;) {
+    pthread_mutex_lock(&m);
+    int fin= !hay_comprador;
+    pthread_mutex_unlock(&m);
+    if (fin) {
+      break;
+    }
     int precio= rand()%1000+1;
     char comprador[10];
     // Se ofrece la vender
@@ -182,7 +188,9 @@ static void *comprador(void *ptr) {
     if (i==N-1 && comp_id==0) {
       // Si esta es la ultima compra de "comp0"
       printf("\ncomp0 hara una pausa de 3 segundos\n");
+      pthread_mutex_lock(&m);
       hay_comprador= 0; // Paramos a todos los vendedores
+      pthread_mutex_unlock(&m);
       sleep(3);
       printf("comp0 hara la ultima compra\n");
       // Haremos una ultima compra por si hay un comprador pegado

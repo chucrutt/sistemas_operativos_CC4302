@@ -65,9 +65,26 @@ void nDevolver() {
     }
     
     // Política alternada: primero intentar asignar a la categoría opuesta
-    int oppositeCategory = (lastCategory == 0) ? 1 : 0;
-    NthQueue *oppositeQueue = (oppositeCategory == 0) ? queue0 : queue1;
-    NthQueue *sameQueue = (lastCategory == 0) ? queue0 : queue1;
+    int oppositeCategory;
+    if (lastCategory == 0) {
+        oppositeCategory = 1;
+    } else {
+        oppositeCategory = 0;
+    }
+    
+    NthQueue *oppositeQueue;
+    if (oppositeCategory == 0) {
+        oppositeQueue = queue0;
+    } else {
+        oppositeQueue = queue1;
+    }
+    
+    NthQueue *sameQueue;
+    if (lastCategory == 0) {
+        sameQueue = queue0;
+    } else {
+        sameQueue = queue1;
+    }
     
     nThread nextTh = NULL;
     int nextCategory = -1;

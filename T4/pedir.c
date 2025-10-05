@@ -1,97 +1,101 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <nthread-impl.h>
 #include "pss.h"
 #include "pedir.h"
 
-
 // Variables globales
-int recurso_disponible;  // 1 si el recurso esta disponible, 0 si no
-int categoria_actual;   // Categoria del thread que posee el recurso (-1 si no hay owner)
-NthQueue cola_cat0; // Cola para threads de categoria 0
-NthQueue cola_cat1; // Cola para threads de categoria 1
+static NthQueue *queue0;  // Cola para threads de categoría 0
+static NthQueue *queue1;  // Cola para threads de categoría 1
+static int resourceFree = 1;    // 1: libre, 0: ocupado
+static nThread resourceOwner = NULL; // Thread que posee el recurso
+static int lastCategory = -1;   // Última categoría que tuvo el recurso
 
 void nth_iniciar() {
-    cola_cat0 = nth_makeQueue;
-    cola_cat1 = nth_makeQueue;
-    recurso_disponible = 1;
-    categoria_actual = -1;
+    queue0 = nth_makeQueue();
+    queue1 = nth_makeQueue();
+    resourceFree = 1;
+    resourceOwner = NULL;
+    lastCategory = -1;
 }
 
 void nth_terminar() {
-    nth_destroyQueue(&cola_cat0);
-    nth_destroyQueue(&cola_cat1);
+    nth_destroyQueue(queue0);
+    nth_destroyQueue(queue1);
 }
 
 int nPedir(int cat, int timeout) {
-    START_CRITICAL;
+    START_CRITICAL
     
-    // Verificar si el recurso esta disponible
-    if (recurso_disponible) {
-        // Asignar el recurso al thread actual
-        recurso_disponible = 0;
-        categoria_actual = cat;
-        END_CRITICAL;
-        return 1;
+    nThread thisTh = nSelf();
+    
+    // Si el recurso está libre, lo asignamos inmediatamente
+    if (resourceFree) {
+        resourceFree = 0;
+        resourceOwner = thisTh;
+        lastCategory = cat;
+        
+        END_CRITICAL
+        return 0;
     }
     
-    // El recurso no esta disponible, agregar el thread a la cola correspondiente
-    pthread_t th = nSelf();
+    // El recurso está ocupado, debemos esperar
+    // Agregar a la cola correspondiente
     if (cat == 0) {
-        nth_putBack(&cola_cat0, th);
+        nth_putBack(queue0, thisTh);
     } else {
-        nth_putBack(&cola_cat1, th);
+        nth_putBack(queue1, thisTh);
     }
     
-    // Suspender el thread hasta que se le asigne el recurso
     suspend(WAIT_REQUEST);
     schedule();
     
-    END_CRITICAL;
-    return 1;
+    END_CRITICAL
+    return 0;
 }
 
 void nDevolver() {
-    START_CRITICAL;
+    START_CRITICAL
     
-    // Liberar el recurso
-    recurso_disponible = 1;
-    int cat_anterior = categoria_actual;
-    categoria_actual = -1;
+    nThread thisTh = nSelf();
     
-    // Politica de asignacion alternada:
-    // 1. Primero intentar asignar a la categoria opuesta
-    // 2. Si no hay threads de categoria opuesta, asignar a la misma categoria
-    // 3. Si no hay threads esperando, dejar el recurso disponible
-    
-    Queue *cola_opuesta, *cola_misma;
-    if (cat_anterior == 0) {
-        cola_opuesta = &cola_cat1;
-        cola_misma = &cola_cat0;
-    } else {
-        cola_opuesta = &cola_cat0;
-        cola_misma = &cola_cat1;
+    if (resourceOwner != thisTh) {
+        END_CRITICAL
+        return;
     }
     
-    pthread_t th_siguiente = NULL;
+    // Política alternada: primero intentar asignar a la categoría opuesta
+    int oppositeCategory = (lastCategory == 0) ? 1 : 0;
+    NthQueue *oppositeQueue = (oppositeCategory == 0) ? queue0 : queue1;
+    NthQueue *sameQueue = (lastCategory == 0) ? queue0 : queue1;
     
-    // Intentar asignar a categoria opuesta primero
-    if (!nth_emptyQueue(cola_opuesta)) {
-        th_siguiente = nth_getFront(cola_opuesta);
-        categoria_actual = (cat_anterior == 0) ? 1 : 0;
+    nThread nextTh = NULL;
+    int nextCategory = -1;
+    
+    // Primero buscar en la cola de la categoría opuesta
+    if (!nth_emptyQueue(oppositeQueue)) {
+        nextTh = nth_getFront(oppositeQueue);
+        nextCategory = oppositeCategory;
     }
-    // Si no hay threads de categoria opuesta, intentar con misma categoria
-    else if (!nth_emptyQueue(cola_misma)) {
-        th_siguiente = nth_getFront(cola_misma);
-        categoria_actual = cat_anterior;
+    // Si no hay en la opuesta, buscar en la misma categoría
+    else if (!nth_emptyQueue(sameQueue)) {
+        nextTh = nth_getFront(sameQueue);
+        nextCategory = lastCategory;
     }
     
-    // Si encontramos un thread esperando, asignar el recurso y activarlo
-    if (th_siguiente != NULL) {
-        recurso_disponible = 0;
-        setReady(th_siguiente);
-        schedule();
+    // Si hay un thread esperando, asignarle el recurso
+    if (nextTh != NULL) {
+        resourceOwner = nextTh;
+        lastCategory = nextCategory;
+        setReady(nextTh);
+    }
+    // Si no hay nadie esperando, liberar el recurso
+    else {
+        resourceFree = 1;
+        resourceOwner = NULL;
+        // lastCategory se mantiene para futuras decisiones
     }
     
-    END_CRITICAL;
+    END_CRITICAL
 }
 

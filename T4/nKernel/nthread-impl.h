@@ -6,6 +6,7 @@
 
 #include <pthread.h>
 #include <signal.h>
+#include <ucontext.h>
 
 #ifndef NTHSTOP
 #include <assert.h>

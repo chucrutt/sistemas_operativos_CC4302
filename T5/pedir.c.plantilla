@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <nthread.h>
+
+#include "pss.h"
+#include "pedir.h"
+
+
+// Defina aca sus variables globales
+...
+
+void nth_iniciar() {
+  ...
+}
+
+void nth_terminar() {
+  ...
+}
+
+int nPedir(int cat, int timeout) {
+  ...
+}
+
+void nDevolver() {
+  ...
+}

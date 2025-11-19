@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include "pss.h"
+#include "spinlocks.h"
+
+... declare aca sus variables globales y estructuras que necesite ...
+
+void discoInit() {
+  ...
+}
+
+void discoDestroy() {
+  ...
+}
+
+char *varon(char *nom) {
+  ...
+}
+
+char *dama(char *nom) {
+  ...
+}

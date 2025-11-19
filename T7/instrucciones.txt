@@ -1,0 +1,89 @@
+Descripción del Problema
+
+En esta tarea Ud. deberá implementar un driver para Linux que permita escribir de manera síncrona y con prioridad.
+
+    Escritura Síncrona: Una operación de escritura (write) debe bloquearse hasta que haya una lectura (read) correspondiente.
+
+    Dispositivos: Debe implementar este comportamiento en 2 dispositivos (ambos con Major number 65):
+
+        /dev/syncwrite0 (Minor 0): Para escrituras no prioritarias.
+
+        /dev/syncwritel (Minor 1): Para escrituras prioritarias.
+
+    Comportamiento de Lectura: Cuando se lee (read) pero no hay ninguna escritura pendiente, read debe entregar 0 bytes leídos. Esto es interpretado normalmente por programas como cat como el fin de archivo (EOF).
+
+Secuencia de Ejecución (Cronología)
+
+Esta lista describe los eventos en el orden exacto en que ocurren. "Shell X" se refiere a la terminal donde se ejecuta el comando.
+
+1. Inicio de escrituras normales (se bloquean):
+
+    Shell 2: Ejecuta echo abc > /dev/syncwrite0.
+
+        Estado: El comando se queda bloqueado esperando a que alguien lea (Nota 1).
+
+Shell 3: Ejecuta echo def > /dev/syncwrite0.
+
+    Estado: El comando también se queda bloqueado.
+
+2. Lectura de los datos pendientes:
+
+    Shell 4: Ejecuta cat /dev/syncwrite0.
+
+        Resultado: Aparece en pantalla el texto abc.
+
+Resultado: Aparece en pantalla el texto def.
+
+Nota: cat lee en orden de llegada (FIFO) para escrituras normales.
+
+3. Desbloqueo de los escritores:
+
+    Shell 2 y Shell 3: Recuperan el control (aparece el prompt $) inmediatamente después de que cat lee sus datos.
+
+Shell 4: Termina su ejecución y muestra el prompt (porque no hay más escrituras pendientes y read retorna 0).
+
+4. Mezcla de escrituras normales y prioritarias:
+
+    Shell 2: Ejecuta echo ghi > /dev/syncwrite0 (Escritura Normal).
+
+        Estado: Se bloquea.
+
+Shell 3: Ejecuta echo jkl > /dev/syncwritel (Escritura Prioritaria).
+
+    Estado: Se bloquea. Nota: Usa el dispositivo con terminación 'l'.
+
+Shell 1: Ejecuta echo hij > /dev/syncwrite0 (Escritura Normal).
+
+    Estado: Se bloquea.
+
+5. Lectura con prioridad:
+
+    Shell 4: Ejecuta cat /dev/syncwrite0.
+
+        Resultado: Aparece jkl primero (porque viene del dispositivo prioritario, aunque se escribió después de ghi).
+
+Resultado: Aparece ghi (orden normal).
+
+Resultado: Aparece hij (orden normal).
+
+Todos los Shells: Terminan y muestran el prompt $.
+
+6. Interrupción de señal:
+
+    Shell 2: Ejecuta echo klm > /dev/syncwrite0.
+
+        Estado: Se bloquea esperando lectura.
+
+Shell 2: Usuario presiona <control-C>.
+
+    Resultado: El proceso se interrumpe y devuelve el prompt. La operación write debe ser capaz de manejar esta interrupción.
+
+Ayuda para la Implementación
+
+    Sincronización: Use los mutex y condiciones definidos en kmutex.h (análogos a pthreads, implementados sobre semáforos del kernel).
+
+    Identificación: Rescatar el número minor con: iminor(filp->f_path.dentry->d_inode).
+
+    Depuración: Use printk para logs del kernel. No use ddd ni gdb.
+
+    Seguridad: Ejecute el comando sync antes de probar para asegurar que los archivos se guarden en disco, ya que un error puede congelar el sistema operativo.
